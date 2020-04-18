@@ -14,18 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Coprocessing.  If not, see <https://www.gnu.org/licenses/>.
  */
-package hello
+package coprocessing.kernel.primitives
 
-import coprocessing._
-import coprocessing.p3._
-
-class Hello(using P3LegacyOps) extends Sketch {
-  override def settings() =
-    size(1000, 800)
-  override def setup() =
-    legacy {
-      thePApplet.background(255, 200, 0)
-    }
+/** Unsafe casts that are sometimes needed internally
+ */
+private object unsafe {
+  /** Obtain a immutable-typed reference to a mutable array.
+   * To be used cautiously and with ownership in mind.
+   */
+  def [T <: Array[Scalar]](self: T).freeze: IArray[Scalar] =
+    self.asInstanceOf[IArray[Scalar]]
+  /** Obtain a mutable-typed reference to an immutable array.
+   * To be used VERY cautiously!
+   */
+  def (self: IArray[Scalar]).unfreeze: Array[Scalar] =
+    self.asInstanceOf[Array[Scalar]]
 }
-
-@main def runHello = runSketch(new Hello)
