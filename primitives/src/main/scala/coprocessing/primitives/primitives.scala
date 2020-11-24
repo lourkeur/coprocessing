@@ -61,7 +61,7 @@ def scalarMatrix(s: Scalar): Matrix =
 final val IdentityMatrix: Matrix =
   scalarMatrix(1)
 
-def (batch: MVectorArray).batchTransformInplace(mat: Matrix): Unit =
+extension (batch: MVectorArray) def batchTransformInplace(mat: Matrix): Unit =
   for i <- 0 until batch.length by 4 do
     val x = dot4(mat,  0)(batch.freeze, i)
     val y = dot4(mat,  4)(batch.freeze, i)
@@ -72,7 +72,7 @@ def (batch: MVectorArray).batchTransformInplace(mat: Matrix): Unit =
     batch(i+2) = z
     batch(i+3) = w
 
-def (mat: MVectorArray).transposeInplace(): Unit =
+extension (mat: MVectorArray) def transposeInplace(): Unit =
   require(mat.length == 16)
   inline def swap(i: Int, j: Int) =
     val tmp = mat(i)
@@ -115,7 +115,7 @@ def foldMulMs(i: Iterator[Matrix]): Matrix =
   if !i.hasNext then
     return IdentityMatrix
   val m0 = i.next()
-  if !i.hasNext
+  if !i.hasNext then
     return m0
   val r = cloneCols(m0)
   while i.hasNext do

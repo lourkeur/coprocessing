@@ -18,7 +18,7 @@ package coprocessing.core
 
 import coprocessing.primitives._
 
-import cats.data.Chain, cats.Show, cats.syntax.foldable.{given _}
+import cats.data.Chain, cats.Show, cats.syntax.foldable.given
 
 opaque type Vector3D = Vector
 object Vector3D {
@@ -32,24 +32,26 @@ object Vector3D {
   val UnitW = Vector3D(0,0,0,1)
 }
 
-extension Vector3DOps on (self: Vector3D) {
-  def toArray: IArray[Scalar] = self
+given Vector3DOps as AnyRef {
+  extension (self: Vector3D) {
+    def toArray: IArray[Scalar] = self
 
-  @annotation.infix def dot(other: Vector3D): Scalar = dotVV(self, other)
+    @annotation.infix def dot(other: Vector3D): Scalar = dotVV(self, other)
 
-  def _1: Scalar = toArray(0)
-  def _2: Scalar = toArray(1)
-  def _3: Scalar = toArray(2)
-  def _4: Scalar = toArray(3)
+    def _1: Scalar = self.toArray(0)
+    def _2: Scalar = self.toArray(1)
+    def _3: Scalar = self.toArray(2)
+    def _4: Scalar = self.toArray(3)
 
-  def x: Scalar = _1
-  def y: Scalar = _2
-  def z: Scalar = _3
-  def w: Scalar = _4
+    def x: Scalar = _1
+    def y: Scalar = _2
+    def z: Scalar = _3
+    def w: Scalar = _4
 
-  def apply(i: Int): Scalar =
-    require(i >= 0 && i < 4)
-    toArray(i)
+    def apply(i: Int): Scalar =
+      require(i >= 0 && i < 4)
+      self.toArray(i)
+  }
 }
 
 opaque type Matrix3D = Matrix
@@ -62,37 +64,39 @@ object Matrix3D {
   def identity: Matrix3D = IdentityMatrix
 }
 
-extension Matrix3DOps on (self: Matrix3D) {
-  def toArray: IArray[Scalar] = self
+given Matrix3DOps as AnyRef {
+  extension (self: Matrix3D) {
+    def toArray: IArray[Scalar] = self
 
-  def apply(v: Vector3D): Vector3D = mulMV(self, v)
-  def compose(other: Matrix3D): Matrix3D = mulMM(self, other)
-  def andThen(other: Matrix3D): Matrix3D = other compose self
+    def apply(v: Vector3D): Vector3D = mulMV(self, v)
+    def compose(other: Matrix3D): Matrix3D = mulMM(self, other)
+    def andThen(other: Matrix3D): Matrix3D = other compose self
 
-  def andThen(t: Transformation): Transformation = t compose self
-  def compose(t: Transformation): Transformation = t andThen self
+    def andThen(t: Transformation): Transformation = t compose self
+    def compose(t: Transformation): Transformation = t andThen self
 
-  def  _1: Scalar = toArray( 0)
-  def  _2: Scalar = toArray( 1)
-  def  _3: Scalar = toArray( 2)
-  def  _4: Scalar = toArray( 3)
-  def  _5: Scalar = toArray( 4)
-  def  _6: Scalar = toArray( 5)
-  def  _7: Scalar = toArray( 6)
-  def  _8: Scalar = toArray( 7)
-  def  _9: Scalar = toArray( 8)
-  def _10: Scalar = toArray( 9)
-  def _11: Scalar = toArray(10)
-  def _12: Scalar = toArray(11)
-  def _13: Scalar = toArray(12)
-  def _14: Scalar = toArray(13)
-  def _15: Scalar = toArray(14)
-  def _16: Scalar = toArray(15)
+    def  _1: Scalar = self.toArray( 0)
+    def  _2: Scalar = self.toArray( 1)
+    def  _3: Scalar = self.toArray( 2)
+    def  _4: Scalar = self.toArray( 3)
+    def  _5: Scalar = self.toArray( 4)
+    def  _6: Scalar = self.toArray( 5)
+    def  _7: Scalar = self.toArray( 6)
+    def  _8: Scalar = self.toArray( 7)
+    def  _9: Scalar = self.toArray( 8)
+    def _10: Scalar = self.toArray( 9)
+    def _11: Scalar = self.toArray(10)
+    def _12: Scalar = self.toArray(11)
+    def _13: Scalar = self.toArray(12)
+    def _14: Scalar = self.toArray(13)
+    def _15: Scalar = self.toArray(14)
+    def _16: Scalar = self.toArray(15)
 
-  def apply(i: Int, j: Int): Scalar =
-    require(i >= 0 && i < 4)
-    require(j >= 0 && j < 4)
-    toArray(i*4+j)
+    def apply(i: Int, j: Int): Scalar =
+      require(i >= 0 && i < 4)
+      require(j >= 0 && j < 4)
+      self.toArray(i*4+j)
+  }
 }
 
 given Show[Matrix3D] {
@@ -125,14 +129,15 @@ object Transformation:
     def show(self: Transformation) =
       self.mkString_("Transformation(", ", ", ")")
 
-extension TransformationOps on (self: Transformation):
-  def apply(v: Vector3D): Vector3D =
-    self.foldLeft(v)((v, m) => mulMV(m, v))  // TODO: optimize
+given TransformationOps as AnyRef:
+  extension (self: Transformation):
+    def apply(v: Vector3D): Vector3D =
+      self.foldLeft(v)((v, m) => mulMV(m, v))  // TODO: optimize
 
-  def andThen(other: Transformation): Transformation = self ++ other
-  def compose(other: Transformation): Transformation = other ++ self
+    def andThen(other: Transformation): Transformation = self ++ other
+    def compose(other: Transformation): Transformation = other ++ self
 
-  def andThen(m: Matrix3D): Transformation = self :+ m
-  def compose(m: Matrix3D): Transformation = m +: self
+    def andThen(m: Matrix3D): Transformation = self :+ m
+    def compose(m: Matrix3D): Transformation = m +: self
 
-  def toMatrix: Matrix3D = foldMulMs(self.iterator)
+    def toMatrix: Matrix3D = foldMulMs(self.iterator)

@@ -4,7 +4,7 @@ sbt.mkDerivation rec {
   pname = "coprocessing";
   version = "0.0.1";
 
-  depsSha256 = "sha256-3N38JEcdWC6Eaq99egNYu6l+IamJyJrT5goAxBCGjos=";
+  depsSha256 = "sha256-2MddrfNN4BxGb5C9xOUphPYB0VQtbbk6Zk1HwEzKj8M=";
 
   depsWarmupCommand = ''
     sbt doc
@@ -21,4 +21,3 @@ sbt.mkDerivation rec {
     cp -a target/*/*.jar -t $out
   '';
 }
-
