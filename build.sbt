@@ -10,6 +10,7 @@ val dottyVersion = "3.0.0-M1"
 lazy val sharedSettings = Seq(
   turbo := true,
   useSuperShell := false,
+  useScala3doc := true,
   scalaVersion := dottyVersion,
   scalacOptions ++= Seq(
     "-Yexplicit-nulls",
