@@ -4,7 +4,7 @@ sbt.mkDerivation rec {
   pname = "coprocessing";
   version = "0.0.1";
 
-  depsSha256 = "sha256-Anr+652V4ZL7ikjjrF3hzeic5F4Mxkq3v8DCyA3B8KA=";
+  depsSha256 = "sha256-28smOBjG8MAjyeMgi82dNuWtsfFPExku2KIXnNtGpJg=";
 
   depsWarmupCommand = ''
     sbt doc
