@@ -36,7 +36,7 @@ given Vector3DOps as AnyRef {
   extension (self: Vector3D) {
     def toArray: IArray[Scalar] = self
 
-    @annotation.infix def dot(other: Vector3D): Scalar = dotVV(self, other)
+    def dot(other: Vector3D): Scalar = dotVV(self, other)
 
     def _1: Scalar = self.toArray(0)
     def _2: Scalar = self.toArray(1)
